@@ -12,26 +12,29 @@ public class SynchronizedExample {
 
     private static class CommonResource {
         int x = 0;
+        synchronized void increment() {
+            x = 1;
+            for (int i = 1; i < 5; i++) {
+                System.out.printf("%s %s \n", Thread.currentThread().getName(), x);
+                x++;
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                }
+            }
+        }
+
     }
 
     private static class CountThread implements Runnable {
         CommonResource res;
-        CountThread(CommonResource resouce) {
-            this.res = resouce;
+
+        CountThread(CommonResource res) {
+            this.res = res;
         }
 
         public void run() {
-            synchronized (res) {
-                res.x = 1;
-                for (int i = 1; i < 5; i++) {
-                    System.out.printf("%s %s \n", Thread.currentThread().getName(), res.x);
-                    res.x++;
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                    }
-                }
-            }
+            res.increment();
         }
     }
 }
